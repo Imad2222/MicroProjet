@@ -9,66 +9,56 @@
 </div>
 
 @if ($message = Session::get('success'))
-
 <div class="alert alert-success" role="alert">
-   {{$message}}
-  </div>
-    
+    {{$message}}
+</div>
 @endif
 
 <div class="table-responsive">
-    <table class="table table-striped table-hover table-borderless table-primary align-middle">
-        <thead class="table-light">
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
             <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Image</th>
                 <th>Price</th>
                 <th>Description</th>
+                <th>Type</th>
+                <th>Qte</th> <!-- Nouvelle colonne pour la quantité -->
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody class="table-group-divider">
+        <tbody>
             @if(!empty($products))
-            @foreach ($products as $item)
-             <tr class="table-primary">
-                <td>{{$item->id}}</td>
-                <td>{{$item->name}}</td>
-                <td><img src="/images/{{$item->image}}" width="200px"></td>
-                <td>{{$item->price}}</td>
-                <td>{{$item->description}}</td>
-                <td>
-                    @auth
-
-                    <form action="{{route('products.destroy',$item->id)}}" method="post">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button> 
-                    </form>
-                    <a class="btn btn-primary" href="{{route('products.edit',$item->id)}}">Edit</a>
-
-                    @endauth
-
-                    <a class="btn btn-info" href="{{route('products.show',$item->id)}}">Show</a>
-                </td>
-            </tr>
-            @endforeach
+                @foreach ($products as $item)
+                <tr>
+                    <td>{{$item->id}}</td>
+                    <td>{{$item->name}}</td>
+                    <td><img src="/images/{{$item->image}}" width="100px"></td>
+                    <td>${{$item->price}}</td>
+                    <td>{{$item->description}}</td>
+                    <td>{{$item->type}}</td>
+                    <td>{{$item->Qte}}</td> <!-- Afficher la quantité -->
+                    <td>
+                        @auth
+                            <form action="{{route('products.destroy',$item->id)}}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button> 
+                            </form>
+                            <a class="btn btn-primary btn-sm" href="{{route('products.edit',$item->id)}}">Edit</a>
+                        @endauth
+                        <a class="btn btn-info btn-sm" href="{{route('products.show',$item->id)}}">Show</a>
+                    </td>
+                </tr>
+                @endforeach
             @endif
-            
-           
         </tbody>
-        <tfoot>
-            
-        </tfoot>
     </table>
 
     <div class="d-flex justify-content-center">
         {{ $products->links() }}
     </div>
-    
-    
-    
 </div> 
 
-    
 @endsection

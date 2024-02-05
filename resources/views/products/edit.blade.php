@@ -57,6 +57,13 @@
                 placeholder=""
             />
         </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Type</label>
+            <select name="type" class="form-control" value='{{$product->type}}'>
+                <option value="electronique">Electronique</option>
+                <option value="informatique">Informatique</option>
+            </select>
+        </div>
 
         <button type="submit" class="btn btn-warning">Update</button>
  

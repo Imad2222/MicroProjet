@@ -38,26 +38,40 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
-
-
-        $request ->validate([
+        $request->validate([
             'name' => 'required',
             'price' => 'required',
-            'description'=>'nullable|max:2048',
-            'image'=>'required|image|mimes:png,jpg,svg,jpeg|max:2048',
+            'description' => 'nullable|max:2048',
+            'image' => 'required|image|mimes:png,jpg,svg,jpeg|max:2048',
+            'type' => 'required|in:electronique,informatique',
         ]);
-        $input=$request->all();
-        if($image= $request->file('image')){
-            $destinationPath='images/';
-            $profileImage=date('YmdHis').".".$image->getClientOriginalExtension();
-            $image->move($destinationPath,$profileImage);
-            $input['image']="$profileImage";
+    
+        $input = $request->all();
+    
+        if ($image = $request->file('image')) {
+            $destinationPath = 'images/';
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+            $input['image'] = $profileImage;
+        }
+    
+        // Vérifiez si un produit avec le même nom existe déjà
+        $existingProduct = Product::where('name', $input['name'])->first();
+    
+        if ($existingProduct) {
+            // Incrémentez la colonne "Qte" s'il existe déjà
+           
+            $existingProduct->increment('Qte');
+        } else {
+            $input['Qte'] = 1;
+            // Créez un nouveau produit s'il n'existe pas
+            Product::create($input);
+        }
+    
+        return redirect()->route('products.index')
+            ->with('success', 'Product created successfully.');
     }
-    Product::create($input);
-    return redirect()->route('products.index')
-    ->with('success','Product created successfully.');
-}
+    
 
     /**
      * Display the specified resource.
@@ -85,6 +99,7 @@ class ProductController extends Controller
             'name' => 'required',
             'price' => 'required',
             'description'=>'nullable|max:2048',
+            'type' => 'required|in:electronique,informatique',
         ]);
         $input=$request->all();
         if($image= $request->file('image')){
